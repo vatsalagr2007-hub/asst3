@@ -133,7 +133,6 @@ int main(int argc, char** argv) {
         }
 	
     } else {
-      
         // all one's test case - you may find this useful for debugging
         for(int i = 0; i < N; i++) {
             inarray[i] = 1;
