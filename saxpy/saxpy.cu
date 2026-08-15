@@ -77,7 +77,7 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     //
         
     // start timing after allocation of device memory
-    double startTime = CycleTimer::currentSeconds();
+    
 
     //
     // CS149 TODO: copy input arrays to the GPU using cudaMemcpy
@@ -88,7 +88,7 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     cudaMemcpy(device_x,xarray,N*sizeof(float),cudaMemcpyHostToDevice);
     cudaMemcpy(device_y,yarray,N*sizeof(float),cudaMemcpyHostToDevice);
 
-
+    double startTime = CycleTimer::currentSeconds();
    
     // run CUDA kernel. (notice the <<< >>> brackets indicating a CUDA
     // kernel launch) Execution on the GPU occurs here.
