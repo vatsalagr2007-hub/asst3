@@ -135,7 +135,7 @@ double cudaScan(int* inarray, int* end, int* resultarray)
 
     double startTime = CycleTimer::currentSeconds();
 
-    exclusive_scan(device_input, N);
+    exclusive_scan(device_input, rounded_length);
 
     // Wait for completion
     cudaDeviceSynchronize();
