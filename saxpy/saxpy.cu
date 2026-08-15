@@ -82,6 +82,12 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     //
     // CS149 TODO: copy input arrays to the GPU using cudaMemcpy
     //
+    cudaMalloc(&device_x,N);
+    cudaMalloc(&device_y,N);
+    cudaMalloc(&device_result,N);
+    cudaMemcpy(device_x,xarray,N,cudaMemcpyHostToDevice);
+    cudaMemcpy(device_y,yarray,N,cudaMemcpyHostToDevice);
+
 
    
     // run CUDA kernel. (notice the <<< >>> brackets indicating a CUDA
@@ -91,10 +97,12 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     //
     // CS149 TODO: copy result from GPU back to CPU using cudaMemcpy
     //
-
+    cudaDeviceSynchronize();
+    double endTime = CycleTimer::currentSeconds();
+    cudaMemcpy(yarray,device_result,N,cudaMemcpyDeviceToHost);
     
     // end timing after result has been copied back into host memory
-    double endTime = CycleTimer::currentSeconds();
+    
 
     cudaError_t errCode = cudaPeekAtLastError();
     if (errCode != cudaSuccess) {
