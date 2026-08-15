@@ -82,11 +82,11 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     //
     // CS149 TODO: copy input arrays to the GPU using cudaMemcpy
     //
-    cudaMalloc(&device_x,N);
-    cudaMalloc(&device_y,N);
-    cudaMalloc(&device_result,N);
-    cudaMemcpy(device_x,xarray,N,cudaMemcpyHostToDevice);
-    cudaMemcpy(device_y,yarray,N,cudaMemcpyHostToDevice);
+    cudaMalloc(&device_x,N*sizeof(float));
+    cudaMalloc(&device_y,N*sizeof(float));
+    cudaMalloc(&device_result,N*sizeof(float));
+    cudaMemcpy(device_x,xarray,N*sizeof(float),cudaMemcpyHostToDevice);
+    cudaMemcpy(device_y,yarray,N*sizeof(float),cudaMemcpyHostToDevice);
 
 
    
@@ -99,7 +99,7 @@ void saxpyCuda(int N, float alpha, float* xarray, float* yarray, float* resultar
     //
     cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
-    cudaMemcpy(yarray,device_result,N,cudaMemcpyDeviceToHost);
+    cudaMemcpy(yarray,device_result,N*sizeof(float),cudaMemcpyDeviceToHost);
     
     // end timing after result has been copied back into host memory
     
