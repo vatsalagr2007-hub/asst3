@@ -78,7 +78,7 @@ void exclusive_scan(int* input, int N)
     //     }
     // }
 
-    cudaMemset(&input[N-1], 0, sizeof(int))
+    cudaMemset(&input[N-1], 0, sizeof(int));
      for (int two_d = N/2; two_d >= 1; two_d /= 2) {
         int two_dplus1 = 2*two_d;
         scan_downsweep<<(N/threads_per_block)/two_dplus1==0?1: (N/threads_per_block)/two_dplus1,threads_per_block>>(input,N,i,two_dplus1);
