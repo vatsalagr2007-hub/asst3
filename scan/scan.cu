@@ -212,13 +212,15 @@ __global__ void isneq(int * input, int * output, int N){
 }
 int find_repeats(int* device_input, int length, int* device_output) {
     int N=length;
+    length=nextPow2(length);
+
     int threads_per_block=512;
 
     iseq<<<(N/threads_per_block)==0?1: (N/threads_per_block),threads_per_block>>>(device_input,device_output,length);
     exclusive_scan(device_output, length);
     cudaDeviceSynchronize();
     int * num=(int*)malloc(sizeof(int));
-    cudaMemcpy(num,device_output +(N-1), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(num,device_output +(length-1), sizeof(int), cudaMemcpyDeviceToHost);
     isneq<<<(N/threads_per_block)==0?1: (N/threads_per_block),threads_per_block>>>(device_output,device_input,N);
 
     cudaDeviceSynchronize();
@@ -245,7 +247,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     cudaDeviceSynchronize();
     double startTime = CycleTimer::currentSeconds();
     
-    int result = find_repeats(device_input, rounded_length, device_output);
+    int result = find_repeats(device_input, length, device_output);
 
     cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
