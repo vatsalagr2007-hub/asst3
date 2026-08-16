@@ -187,21 +187,40 @@ double cudaScanThrust(int* inarray, int* end, int* resultarray) {
 // indices `i` for which `device_input[i] == device_input[i+1]`.
 //
 // Returns the total number of pairs found
+
+
+
+__global__ void iseq(int * input, int * output, int N){
+    int x=blockIdx.x*blockDim.x+threadIdx.x;
+    
+    if(x>=N-1){
+        return;
+    }
+    if(input[x]==input[x+1]){
+        output[x]=1;
+    }
+    return;
+}
+__global__ void isneq(int * input, int * output, int N){
+    int x=blockIdx.x*blockDim.x+threadIdx.x;
+    if(x>=N-1){
+        return;
+    }
+    if(input[x+1]-input[x]==1){
+        output[input[x]]=x;
+    }
+    return;
+}
 int find_repeats(int* device_input, int length, int* device_output) {
+    int threads_per_block=512;
+    iseq<<<N/threads_per_block,threads_per_block>>>(device_input,device_output,length);
+    exclusive_scan(device_output, length);
+    cudaDeviceSynchronize();
+    int num = device_output[N-1];
+    isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
-    // CS149 TODO:
-    //
-    // Implement this function. You will probably want to
-    // make use of one or more calls to exclusive_scan(), as well as
-    // additional CUDA kernel launches.
-    //    
-    // Note: As in the scan code, the calling code ensures that
-    // allocated arrays are a power of 2 in size, so you can use your
-    // exclusive_scan function with them. However, your implementation
-    // must ensure that the results of find_repeats are correct given
-    // the actual array length.
 
-    return 0; 
+    return num; 
 }
 
 
@@ -229,7 +248,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
 
     // set output count and results array
     *output_length = result;
-    cudaMemcpy(output, device_output, length * sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(output, device_input, length * sizeof(int), cudaMemcpyDeviceToHost);
 
     cudaFree(device_input);
     cudaFree(device_output);
