@@ -229,7 +229,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
 
-    return num; 
+    return *num; 
 }
 
 
