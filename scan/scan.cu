@@ -218,7 +218,8 @@ int find_repeats(int* device_input, int length, int* device_output) {
 
     int threads_per_block=512;
 
-    iseq<<<(N%threads_per_block)!=0?(N/threads_per_block)+1: (N/threads_per_block),threads_per_block>>>(device_input,device_output,length);
+    iseq<<<(N%threads_per_block)!=0?(N/threads_per_block)+1: (N/threads_per_block),threads_per_block>>>(device_input,device_output,N);
+    //cudaDeviceSynchronize();
     exclusive_scan(device_output, length);
     cudaDeviceSynchronize();
     int * num=(int*)malloc(sizeof(int));
