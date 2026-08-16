@@ -197,7 +197,7 @@ __global__ void iseq(int * input, int * output, int N){
         return;
     }
     if(input[x]==input[x+1]){
-        cout<<"hello"<<endl;
+        std::cout<<"hello"<<std::endl;
         output[x]=1;
     }
     return;
