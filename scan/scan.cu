@@ -212,12 +212,13 @@ __global__ void isneq(int * input, int * output, int N){
     return;
 }
 int find_repeats(int* device_input, int length, int* device_output) {
+    int N=length;
     int threads_per_block=512;
     iseq<<<N/threads_per_block,threads_per_block>>>(device_input,device_output,length);
     exclusive_scan(device_output, length);
     cudaDeviceSynchronize();
     int num = device_output[N-1];
-    cout<<"\n\n\nthe number is "<<num<<endl;
+    std::cout<<"\n\n\nthe number is "<<num<<std::endl;
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
 
