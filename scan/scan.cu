@@ -243,7 +243,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     cudaDeviceSynchronize();
     double startTime = CycleTimer::currentSeconds();
     
-    int result = find_repeats(device_input, length, device_output);
+    int result = find_repeats(device_input, rounded_length, device_output);
 
     cudaDeviceSynchronize();
     double endTime = CycleTimer::currentSeconds();
