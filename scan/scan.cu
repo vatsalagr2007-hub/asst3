@@ -225,7 +225,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     int * num=(int*)malloc(sizeof(int));
     cudaMemcpy(num,device_output +(N-1), sizeof(int), cudaMemcpyDeviceToHost);
     std::cout<<"\n\n\nHELLO2"<<std::endl;
-    std::cout<<"\n\n\nthe number is "<<num<<std::endl;
+    std::cout<<"\n\n\nthe number is "<<*num<<std::endl;
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
 
