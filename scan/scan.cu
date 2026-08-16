@@ -222,7 +222,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     
     cudaDeviceSynchronize();
     std::cout<<"\n\n\nHELLO21"<<std::endl;
-    int num;
+    int * num=malloc[sizeof(int)];
     cudaMemcpy(num,device_output[N-1], sizeof(int), cudaMemcpyDeviceToHost);
     std::cout<<"\n\n\nHELLO2"<<std::endl;
     std::cout<<"\n\n\nthe number is "<<num<<std::endl;
