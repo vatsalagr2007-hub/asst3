@@ -197,6 +197,7 @@ __global__ void iseq(int * input, int * output, int N){
         return;
     }
     if(input[x]==input[x+1]){
+        cout<<"hello"<<endl;
         output[x]=1;
     }
     return;
@@ -214,17 +215,13 @@ __global__ void isneq(int * input, int * output, int N){
 int find_repeats(int* device_input, int length, int* device_output) {
     int N=length;
     int threads_per_block=512;
-    std::cout<<"\n\n\nHELLO"<<std::endl;
+
     iseq<<<N/threads_per_block,threads_per_block>>>(device_input,device_output,length);
     cudaDeviceSynchronize();
-    std::cout<<"\n\n\nHELLO1"<<std::endl;
     exclusive_scan(device_output, length);
-    
     cudaDeviceSynchronize();
-    std::cout<<"\n\n\nHELLO21"<<std::endl;
     int * num=(int*)malloc(sizeof(int));
     cudaMemcpy(num,device_output +(N-1), sizeof(int), cudaMemcpyDeviceToHost);
-    std::cout<<"\n\n\nHELLO2"<<std::endl;
     std::cout<<"\n\n\nthe number is "<<*num<<std::endl;
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
