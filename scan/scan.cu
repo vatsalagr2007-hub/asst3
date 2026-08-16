@@ -222,7 +222,6 @@ int find_repeats(int* device_input, int length, int* device_output) {
     int * num=(int*)malloc(sizeof(int));
     cudaMemcpy(num,device_output +(N-1), sizeof(int), cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
-    std::cout<<"\n\n\nthe number is "<<length<<std::endl;
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
     cudaDeviceSynchronize();
@@ -240,7 +239,10 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     int *device_input;
     int *device_output;
     int rounded_length = nextPow2(length);
-    
+    for(int i=0;i<length;i++){
+        std::cout<<input[i]<<" ";
+    }
+    std::cout<<std::endl
     cudaMalloc((void **)&device_input, rounded_length * sizeof(int));
     cudaMalloc((void **)&device_output, rounded_length * sizeof(int));
     cudaMemcpy(device_input, input, length * sizeof(int), cudaMemcpyHostToDevice);
@@ -255,8 +257,13 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
 
     // set output count and results array
     *output_length = result;
+    int * a = (int *)malloc(rounded_length*sizeof(int));
     cudaMemcpy(output, device_input, length * sizeof(int), cudaMemcpyDeviceToHost);
-
+    cudaMemcpy(a, device_output, rounded_length * sizeof(int), cudaMemcpyDeviceToHost);
+    for(int i=0;i<rounded_length;i++){
+        std::cout<<a[i]<<" ";
+    }
+    std::cout<<std::endl
     cudaFree(device_input);
     cudaFree(device_output);
 
