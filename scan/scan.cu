@@ -217,6 +217,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     exclusive_scan(device_output, length);
     cudaDeviceSynchronize();
     int num = device_output[N-1];
+    cout<<"\n\n\nthe number is "<<num<<endl;
     isneq<<<N/threads_per_block,threads_per_block>>>(device_output,device_input,N);
 
 
