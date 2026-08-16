@@ -263,7 +263,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     for(int i=0;i<rounded_length;i++){
         std::cout<<a[i]<<" ";
     }
-    std::cout<<std::endl
+    std::cout<<std::endl;
     cudaFree(device_input);
     cudaFree(device_output);
 
