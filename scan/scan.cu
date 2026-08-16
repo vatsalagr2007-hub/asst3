@@ -242,7 +242,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     for(int i=0;i<length;i++){
         std::cout<<input[i]<<" ";
     }
-    std::cout<<std::endl
+    std::cout<<std::endl;
     cudaMalloc((void **)&device_input, rounded_length * sizeof(int));
     cudaMalloc((void **)&device_output, rounded_length * sizeof(int));
     cudaMemcpy(device_input, input, length * sizeof(int), cudaMemcpyHostToDevice);
