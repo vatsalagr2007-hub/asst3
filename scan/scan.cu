@@ -130,7 +130,6 @@ double cudaScan(int* inarray, int* end, int* resultarray)
     // vector if desired.  If you do this, you will need to keep this
     // in mind when calling exclusive_scan from find_repeats.
     cudaMemcpy(device_input, inarray, (end - inarray) * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(device_input, 0, rounded_length* sizeof(int)-(end - inarray) * sizeof(int), cudaMemcpyHostToDevice);
    // cudaMemcpy(device_result, inarray, (end - inarray) * sizeof(int), cudaMemcpyHostToDevice);
 
     double startTime = CycleTimer::currentSeconds();
@@ -241,6 +240,7 @@ double cudaFindRepeats(int *input, int length, int *output, int *output_length) 
     cudaMalloc((void **)&device_input, rounded_length * sizeof(int));
     cudaMalloc((void **)&device_output, rounded_length * sizeof(int));
     cudaMemcpy(device_input, input, length * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemset(device_input + length, 0, (rounded_length - length) * sizeof(int));
 
     cudaDeviceSynchronize();
     double startTime = CycleTimer::currentSeconds();
