@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
         if (useThrust) { 
             printf("Thrust GPU time: %.3f ms\n", 1000.f * cudaTime);
         } else {    
-            printf("Student GPU time: %.3f ms\n", 1000.f * cudaTime);
+            //printf("Student GPU time: %.3f ms\n", 1000.f * cudaTime);
         } 
 
         // validate results

@@ -188,47 +188,43 @@ double cudaScanThrust(int* inarray, int* end, int* resultarray) {
 // Returns the total number of pairs found
 
 
-
-__global__ void iseq(int * input, int * output, int N){
-    int x=blockIdx.x*blockDim.x+threadIdx.x;
-    
-    if(x>=N-1){
+__global__ void iseq(int* device_input, int length,int* output){
+    int n=blockIdx.x*blockDim.x+threadIdx.x;
+    if(n==length-1){
+        output[n]=0;
         return;
     }
-    if(input[x]==input[x+1]){
-        output[x]=1;
+    if(device_input[n]==device_input[n+1]){
+        output[n]=1;
     }else{
-        output[x]=0;
+        output[n]=0;
     }
-    return;
+
 }
-__global__ void isneq(int * input, int * output, int N){
-    int x=blockIdx.x*blockDim.x+threadIdx.x;
-    if(x>=N-1){
+__global__ void isneq(int* device_input, int length,int* output){
+    int n=blockIdx.x*blockDim.x+threadIdx.x;
+    if(n==length-1){
         return;
     }
-    if(input[x+1]-input[x]==1){
-        output[input[x]]=x;
+    if(device_input[n]!=device_input[n+1]){
+        output[device_input[n]]=n;
     }
-    return;
+
 }
 int find_repeats(int* device_input, int length, int* device_output) {
-    int N=length;
-    length=nextPow2(length);
-
+    int N = nextPow2(length);
     int threads_per_block=512;
 
-    iseq<<<(N%threads_per_block)!=0?(N/threads_per_block)+1: (N/threads_per_block),threads_per_block>>>(device_input,device_output,N);
-    //cudaDeviceSynchronize();
-    exclusive_scan(device_output, length);
-    cudaDeviceSynchronize();
-    int * num=(int*)malloc(sizeof(int));
-    cudaMemcpy(num,device_output +(length-1), sizeof(int), cudaMemcpyDeviceToHost);
-    isneq<<<(N%threads_per_block)!=0?(N/threads_per_block)+1: (N/threads_per_block),threads_per_block>>>(device_output,device_input,N);
+    int * Value;
+    cudaMalloc((void**)&Value,sizeof(int)*N);
+    iseq<<<length%threads_per_block==0?length/threads_per_block:length/threads_per_block+1,threads_per_block>>>(device_input,length,Value);
+    exclusive_scan(Value, N);
+    isneq<<<length%threads_per_block==0?length/threads_per_block:length/threads_per_block+1,threads_per_block>>>(Value,length,device_output);
+    cudaFree(Value);
+    return Value[N-1];
 
-    cudaDeviceSynchronize();
+    
 
-    return ((*num)); 
 }
 
 
