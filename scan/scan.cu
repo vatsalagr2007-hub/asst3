@@ -218,7 +218,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     int * Value;
     cudaMalloc((void**)&Value,sizeof(int)*N);
     
-    iseq<<<N/threads_per_block,threads_per_block>>>(device_input,N,Value);
+    iseq<<<N/threads_per_block,threads_per_block>>>(device_input,length,Value);
     cudaDeviceSynchronize();
     exclusive_scan(Value, N);    
    
