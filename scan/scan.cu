@@ -203,7 +203,7 @@ __global__ void iseq(int* device_input, int length,int* output){
 }
 __global__ void isneq(int* device_input, int length,int* output){
     int n=blockIdx.x*blockDim.x+threadIdx.x;
-    if(n==length-1){
+    if(n>=length-1){
         return;
     }
     if(device_input[n]!=device_input[n+1]){
@@ -218,7 +218,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     int * Value;
     cudaMalloc((void**)&Value,sizeof(int)*N);
     
-    iseq<<<N/threads_per_block,threads_per_block>>>(device_input,length,Value);
+    iseq<<<N%threads_per_block==0?N/threads_per_block:N/threads_per_block+1,threads_per_block>>>(device_input,length,Value);
     cudaDeviceSynchronize();
     exclusive_scan(Value, N);
     isneq<<<length%threads_per_block==0?length/threads_per_block:length/threads_per_block+1,threads_per_block>>>(Value,length,device_input);
