@@ -224,7 +224,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
    
     isneq<<<length%threads_per_block==0?length/threads_per_block:length/threads_per_block+1,threads_per_block>>>(Value,length,device_input);
     cudaDeviceSynchronize();
-    int *x=malloc(sizeof(int));
+    int *x=(int*)malloc(sizeof(int));
     cudaMemcpy( x, Value+N-1,sizeof(int), cudaMemcpyDeviceToHost);
     cudaFree(Value);
     return * x;
