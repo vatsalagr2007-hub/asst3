@@ -190,7 +190,7 @@ double cudaScanThrust(int* inarray, int* end, int* resultarray) {
 
 __global__ void iseq(int* device_input, int length,int* output){
     int n=blockIdx.x*blockDim.x+threadIdx.x;
-    if(n==length-1){
+    if(n>=length-1){
         output[n]=0;
         return;
     }
@@ -218,7 +218,7 @@ int find_repeats(int* device_input, int length, int* device_output) {
     int * Value;
     cudaMalloc((void**)&Value,sizeof(int)*N);
     
-    iseq<<<length%threads_per_block==0?length/threads_per_block:length/threads_per_block+1,threads_per_block>>>(device_input,length,Value);
+    iseq<<<N/threads_per_block,threads_per_block>>>(device_input,N,Value);
     cudaDeviceSynchronize();
     exclusive_scan(Value, N);    
    
