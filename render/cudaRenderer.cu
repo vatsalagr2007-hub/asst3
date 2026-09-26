@@ -18,6 +18,10 @@
 // Putting all the cuda kernels here
 ///////////////////////////////////////////////////////////////////////////////////////
 
+#define TILEX 16
+#define TILEY 16
+
+
 struct GlobalConstants {
 
     SceneName sceneName;
@@ -29,6 +33,7 @@ struct GlobalConstants {
     float* radius;
     short* xRange;
     short* yRange;
+    int * mask;
 
     
 
@@ -569,16 +574,29 @@ __global__ void kernelRenderCircles() {
     short minY = static_cast<short>(p.y - rad);
     short maxY = static_cast<short>(p.y + rad) + 1;
 
+    short minx=minX/TILEX;
+    short miny=minY/TILEY;
+    short maxx=(maxX+TILEX-1)/TILEX;
+    short maxy=(maxY+TILEY-1)/TILEY;
+    for(int i=miny;i<maxy;i++){
+        for(int j=minx;j<maxx;j++){
+            int tile=i*TILEX+j;
+            atomicOr(&cuConstRendererParams.mask[tile*numCircles+tile+index/32],1<<(index%32));
+        }
 
+    }
     // a bunch of clamps.  Is there a CUDA built-in for this?
-    short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
-    short screenMaxX = (maxX > 0) ? ((maxX < imageWidth) ? maxX : imageWidth) : 0;
-    short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
-    short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
-    cuConstRendererParams.xRange[2*index]=screenMinX;
-    cuConstRendererParams.xRange[2*index+1]=screenMaxX;
-    cuConstRendererParams.yRange[2*index]=screenMinY;
-    cuConstRendererParams.yRange[2*index+1]=screenMaxY;
+
+
+
+    // short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
+    // short screenMaxX = (maxX > 0) ? ((maxX < imageWidth) ? maxX : imageWidth) : 0;
+    // short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
+    // short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
+    // cuConstRendererParams.xRange[2*index]=screenMinX;
+    // cuConstRendererParams.xRange[2*index+1]=screenMaxX;
+    // cuConstRendererParams.yRange[2*index]=screenMinY;
+    // cuConstRendererParams.yRange[2*index+1]=screenMaxY;
 
 
 
@@ -692,7 +710,7 @@ CudaRenderer::setup() {
     //
     // See the CUDA Programmer's Guide for descriptions of
     // cudaMalloc and cudaMemcpy
-
+    cudaMalloc(&cudaMask, image->width*image->width/TILEX/TILEX*numCircles/8);
     cudaMalloc(&cudaDevicePosition, sizeof(float) * 3 * numCircles);
     cudaMalloc(&cudaDeviceVelocity, sizeof(float) * 3 * numCircles);
     cudaMalloc(&cudaDeviceColor, sizeof(float) * 3 * numCircles);
@@ -724,6 +742,7 @@ CudaRenderer::setup() {
     params.position = cudaDevicePosition;
     params.xRange = cudaXRange;
     params.yRange = cudaYRange;
+    params.mask = cudaMask;
 
     params.velocity = cudaDeviceVelocity;
     params.color = cudaDeviceColor;
@@ -822,12 +841,12 @@ CudaRenderer::render() {
 
     kernelRenderCircles<<<gridDim, blockDim>>>();
     cudaDeviceSynchronize();
-    dim3 blockDim1(16, 16, 1);
-    dim3 gridDim1(
-        (image->width + blockDim1.x - 1) / blockDim1.x,
-        (image->height + blockDim1.y - 1) / blockDim1.y);
+    // dim3 blockDim1(TILEX, TILEY, 1);
+    // dim3 gridDim1(
+    //     (image->width + blockDim1.x - 1) / blockDim1.x,
+    //     (image->height + blockDim1.y - 1) / blockDim1.y);
 
-    shadePixels<<<gridDim1,blockDim1>>>();
-    cudaDeviceSynchronize();
+    // shadePixels<<<gridDim1,blockDim1>>>();
+    // cudaDeviceSynchronize();
 
 }
