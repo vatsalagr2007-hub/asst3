@@ -581,7 +581,7 @@ __global__ void kernelRenderCircles() {
     for(int i=miny;i<maxy;i++){
         for(int j=minx;j<maxx;j++){
             int tile=i*TILEX+j;
-            atomicOr(&cuConstRendererParams.mask[tile*numCircles+tile+index/32],1<<(index%32));
+            atomicOr(&cuConstRendererParams.mask[tile*cuConstRendererParams.numCircles+tile+index/32],1<<(index%32));
         }
 
     }
