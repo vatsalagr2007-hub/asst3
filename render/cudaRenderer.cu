@@ -33,7 +33,7 @@ struct GlobalConstants {
     float* radius;
     short* xRange;
     short* yRange;
-    int * mask;
+    unsigned int * mask;
 
     
 
@@ -423,7 +423,6 @@ __global__ void shadePixels() {
 
 
 
-
     int indexX= blockIdx.x * blockDim.x + threadIdx.x;
     int indexY= blockIdx.y * blockDim.y + threadIdx.y;
     int index=indexX+indexY*cuConstRendererParams.imageWidth;
@@ -434,6 +433,11 @@ __global__ void shadePixels() {
     
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
+        unsigned int tile = blockIdx.x + blockIdx.y*gridDim.x;
+        if(!(cuConstRendererParams.mask[((long)tile*(long)cuConstRendererParams.numCircles)/32+(((long)tile*(long)cuConstRendererParams.numCircles)%32+i)/32]&1u<<((((long)tile*(long)cuConstRendererParams.numCircles)%32+i)%32))){
+            continue;
+        }
+        
         float3 posn=((float3*)cuConstRendererParams.position)[i];
         //if(posn.x>=cuConstRendererParams)
             //add wrap divergance.
@@ -592,8 +596,8 @@ __global__ void kernelRenderCircles() {
 
     for(int i=miny;i<maxy;i++){
         for(int j=minx;j<maxx;j++){
-            int tile=i*TILEX+j;
-            atomicOr(&cuConstRendererParams.mask[(tile/32)*cuConstRendererParams.numCircles+(index)/32],1<<(index%32));
+            unsigned int tile=i*TILEX+j;
+            atomicOr(&cuConstRendererParams.mask[((long)tile*(long)cuConstRendererParams.numCircles)/32+(((long)tile*(long)cuConstRendererParams.numCircles)%32+index)/32],1u<<((((long)tile*(long)cuConstRendererParams.numCircles)%32+index)%32));
         }
 
     }
@@ -849,12 +853,12 @@ CudaRenderer::render() {
 
     kernelRenderCircles<<<gridDim, blockDim>>>();
     cudaDeviceSynchronize();
-    // dim3 blockDim1(TILEX, TILEY, 1);
-    // dim3 gridDim1(
-    //     (image->width + blockDim1.x - 1) / blockDim1.x,
-    //     (image->height + blockDim1.y - 1) / blockDim1.y);
+    dim3 blockDim1(TILEX, TILEY, 1);
+    dim3 gridDim1(
+        (image->width + blockDim1.x - 1) / blockDim1.x,
+        (image->height + blockDim1.y - 1) / blockDim1.y);
 
-    // shadePixels<<<gridDim1,blockDim1>>>();
-    // cudaDeviceSynchronize();
+    shadePixels<<<gridDim1,blockDim1>>>();
+    cudaDeviceSynchronize();
 
 }
