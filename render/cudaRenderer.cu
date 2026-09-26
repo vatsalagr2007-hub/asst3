@@ -425,6 +425,8 @@ __global__ void shadePixels() {
     if(indexX>=cuConstRendererParams.imageWidth||indexY>=cuConstRendererParams.imageHeight){
         return;
     }
+    ((float4*)cuConstRendererParams.imageData)[index] = make_float4(1, 0, 0, 1);
+return;
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
         float3 posn=((float3*)cuConstRendererParams.position)[i];
@@ -820,7 +822,7 @@ CudaRenderer::render() {
 
     kernelRenderCircles<<<gridDim, blockDim>>>();
     cudaDeviceSynchronize();
-    dim3 blockDim1(32, 16, 1);
+    dim3 blockDim1(16, 16, 1);
     dim3 gridDim1(
         (image->width + blockDim.x - 1) / blockDim.x,
         (image->height + blockDim.y - 1) / blockDim.y);
