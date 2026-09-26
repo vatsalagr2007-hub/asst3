@@ -5,7 +5,7 @@ CU_FILES   := cudaRenderer.cu benchmark.cu
 
 CU_DEPS    :=
 
-CC_FILES   := main.cpp display.cpp refRenderer.cpp \
+CC_FILES   := main.cpp refRenderer.cpp \
               noise.cpp ppm.cpp sceneLoader.cpp
 
 LOGS	   := logs

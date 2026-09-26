@@ -182,12 +182,12 @@ int main(int argc, char** argv)
         renderer->loadScene(sceneName, seed);
         renderer->setup();
 
-        if (!interactiveMode)
+        // if (!interactiveMode)
             startBenchmark(renderer, benchmarkFrameStart, benchmarkFrameEnd - benchmarkFrameStart, frameFilename);
-        else {
-            glutInit(&argc, argv);
-            startRendererWithDisplay(renderer);
-        }
+        // else {
+        //     glutInit(&argc, argv);
+        //     startRendererWithDisplay(renderer);
+        // }
     }
 
     return 0;
