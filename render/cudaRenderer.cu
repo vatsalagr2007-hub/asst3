@@ -392,8 +392,7 @@ __global__ void kernelAdvanceSnowflake() {
 
 
 
-__global__ void
-shadePixel() {
+__global__ void shadePixels() {
 
 
 
@@ -428,8 +427,8 @@ shadePixel() {
     }
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
-        float diffX = position[3*i] - indexX;
-        float diffY = position[3*i+1] - indexY;
+        float diffX = cuConstRendererParams.position[3*i] - indexX;
+        float diffY = cuConstRendererParams.position[3*i+1] - indexY;
         float pixelDist = diffX * diffX + diffY * diffY;
         float rad = cuConstRendererParams.radius[i];
         float maxDist = rad * rad;
@@ -819,5 +818,5 @@ CudaRenderer::render() {
         (image->width + blockDim.x - 1) / blockDim.x,
         (image->height + blockDim.y - 1) / blockDim.y);
 
-    shadePixel<<<gridDim1,blockDim1>>>();
+    shadePixels<<<gridDim1,blockDim1>>>();
 }
