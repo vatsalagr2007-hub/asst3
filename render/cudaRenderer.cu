@@ -560,7 +560,7 @@ __global__ void kernelRenderCircles() {
     // read position and radius
     short imageWidth = cuConstRendererParams.imageWidth;
     short imageHeight = cuConstRendererParams.imageHeight;
-    if(cuConstRendererParams.position[index3]<1){
+    if(cuConstRendererParams.radius[index]<1){
         cuConstRendererParams.position[index3]=std::round(cuConstRendererParams.position[index3]*imageWidth);
         cuConstRendererParams.position[index3+1]=std::round(cuConstRendererParams.position[index3+1]*imageHeight);
 
@@ -596,7 +596,7 @@ __global__ void kernelRenderCircles() {
 
     for(int i=miny;i<maxy;i++){
         for(int j=minx;j<maxx;j++){
-            unsigned int tile=i*TILEX+j;
+            unsigned int tile=i*(imageWidth)/TILEX+j;
             atomicOr(&cuConstRendererParams.mask[((long)tile*(long)cuConstRendererParams.numCircles)/32+(((long)tile*(long)cuConstRendererParams.numCircles)%32+index)/32],1u<<((((long)tile*(long)cuConstRendererParams.numCircles)%32+index)%32));
         }
 
