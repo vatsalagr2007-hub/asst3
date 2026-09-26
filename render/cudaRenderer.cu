@@ -434,8 +434,8 @@ __global__ void shadePixels() {
 
 
 
-        float diffX = posn.x - indexX;
-        float diffY = posn.y - indexY;
+        float diffX = posn.x +0.5f - indexX;
+        float diffY = posn.y +0.5f - indexY;
         float pixelDist = diffX * diffX + diffY * diffY;
         float rad = cuConstRendererParams.radius[i];
         float maxDist = rad * rad;
@@ -550,11 +550,11 @@ __global__ void kernelRenderCircles() {
     short imageWidth = cuConstRendererParams.imageWidth;
     short imageHeight = cuConstRendererParams.imageHeight;
     cuConstRendererParams.position[index3]=std::round(cuConstRendererParams.position[index3]*imageWidth);
-    cuConstRendererParams.position[index3+1]=std::round(cuConstRendererParams.position[index3]*imageHeight);
+    cuConstRendererParams.position[index3+1]=std::round(cuConstRendererParams.position[index3+1]*imageHeight);
 
 
     //as width= height, so no issues.
-    cuConstRendererParams.radius[index]=std::round(cuConstRendererParams.radius[index3]*imageWidth);
+    cuConstRendererParams.radius[index]=std::round(cuConstRendererParams.radius[index]*imageWidth);
     float3 p = ((float3*)cuConstRendererParams.position)[index];
     float  rad = cuConstRendererParams.radius[index];
 

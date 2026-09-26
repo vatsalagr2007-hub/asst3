@@ -13,8 +13,8 @@ class CudaRenderer : public CircleRenderer {
   float* velocity;
   float* color;
   float* radius;
-  float* cudaXRange;  
-  float* cudaYRange;
+  short* cudaXRange;  
+  short* cudaYRange;
 
   float* cudaDevicePosition;
   float* cudaDeviceVelocity;
