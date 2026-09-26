@@ -581,10 +581,14 @@ __global__ void kernelRenderCircles() {
     short screenMaxX = (maxX > 0) ? ((maxX < imageWidth) ? maxX : imageWidth) : 0;
     short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
     short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
+    if(screenMinX==imageWidth||screenMinY==imageHeight||screenMaxX==0||screenMaxY==0){
+        return;
+    }
     short minx=screenMinX/TILEX;
     short miny=screenMinY/TILEY;
     short maxx=(screenMaxX+TILEX-1)/TILEX;
     short maxy=(screenMaxY+TILEY-1)/TILEY;
+    
 
     for(int i=miny;i<maxy;i++){
         for(int j=minx;j<maxx;j++){
