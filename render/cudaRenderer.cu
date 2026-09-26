@@ -422,46 +422,46 @@ __global__ void shadePixels() {
     int indexX= blockIdx.x * blockDim.x + threadIdx.x;
     int indexY= blockIdx.y * blockDim.y + threadIdx.y;
     int index=indexX+indexY*cuConstRendererParams.imageWidth;
-   // if(indexX>=cuConstRendererParams.imageWidth||indexY>=cuConstRendererParams.imageHeight){
-        ((float4*)cuConstRendererParams.imageData)[index] = make_float4(1, 0, 0, 1);
-        return;
-    //}
+   if(indexX>=cuConstRendererParams.imageWidth||indexY>=cuConstRendererParams.imageHeight){
+      
+       return;
+    }
     
-    // float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
-    // for(int i=0;i<cuConstRendererParams.numCircles;i++){
-    //     float3 posn=((float3*)cuConstRendererParams.position)[i];
-    //     //if(posn.x>=cuConstRendererParams)
-    //         //add wrap divergance.
+    float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
+    for(int i=0;i<cuConstRendererParams.numCircles;i++){
+        float3 posn=((float3*)cuConstRendererParams.position)[i];
+        //if(posn.x>=cuConstRendererParams)
+            //add wrap divergance.
 
 
 
 
-    //     float diffX = posn.x +0.5f - indexX;
-    //     float diffY = posn.y +0.5f - indexY;
-    //     float pixelDist = diffX * diffX + diffY * diffY;
-    //     float rad = cuConstRendererParams.radius[i];
-    //     float maxDist = rad * rad;
-    //     if (pixelDist > maxDist)
-    //         continue;
-    //     float3 rgb;
-    //     float alpha;
-    //     // snowflake
-    //     //
-    //     //
-    //     //
-    //     rgb = ((float3*)cuConstRendererParams.color)[i];
-    //     alpha = .5f;
+        float diffX = posn.x +0.5f - indexX;
+        float diffY = posn.y +0.5f - indexY;
+        float pixelDist = diffX * diffX + diffY * diffY;
+        float rad = cuConstRendererParams.radius[i];
+        float maxDist = rad * rad;
+        if (pixelDist > maxDist)
+            continue;
+        float3 rgb;
+        float alpha;
+        // snowflake
+        //
+        //
+        //
+        rgb = ((float3*)cuConstRendererParams.color)[i];
+        alpha = .5f;
         
 
 
 
-    //     float oneMinusAlpha = 1.f - alpha;
-    //     imgptr.x=imgptr.x*(oneMinusAlpha)+rgb.x*alpha;
-    //     imgptr.y=imgptr.y*(oneMinusAlpha)+rgb.y*alpha;
-    //     imgptr.z=imgptr.z*(oneMinusAlpha)+rgb.z*alpha;
-    //     imgptr.w=imgptr.w+alpha;
-    // }
-    // ((float4*)cuConstRendererParams.imageData)[index]=imgptr;
+        float oneMinusAlpha = 1.f - alpha;
+        imgptr.x=imgptr.x*(oneMinusAlpha)+rgb.x*alpha;
+        imgptr.y=imgptr.y*(oneMinusAlpha)+rgb.y*alpha;
+        imgptr.z=imgptr.z*(oneMinusAlpha)+rgb.z*alpha;
+        imgptr.w=imgptr.w+alpha;
+    }
+    ((float4*)cuConstRendererParams.imageData)[index]=imgptr;
     
 
     
