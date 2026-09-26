@@ -556,12 +556,15 @@ __global__ void kernelRenderCircles() {
     // read position and radius
     short imageWidth = cuConstRendererParams.imageWidth;
     short imageHeight = cuConstRendererParams.imageHeight;
-    cuConstRendererParams.position[index3]=std::round(cuConstRendererParams.position[index3]*imageWidth);
-    cuConstRendererParams.position[index3+1]=std::round(cuConstRendererParams.position[index3+1]*imageHeight);
+    if(cuConstRendererParams.position[index3]<1){
+        cuConstRendererParams.position[index3]=std::round(cuConstRendererParams.position[index3]*imageWidth);
+        cuConstRendererParams.position[index3+1]=std::round(cuConstRendererParams.position[index3+1]*imageHeight);
 
 
-    //as width= height, so no issues.
-    cuConstRendererParams.radius[index]=std::round(cuConstRendererParams.radius[index]*imageWidth);
+        //as width= height, so no issues.
+        cuConstRendererParams.radius[index]=std::round(cuConstRendererParams.radius[index]*imageWidth);
+    }
+    
     float3 p = ((float3*)cuConstRendererParams.position)[index];
     float  rad = cuConstRendererParams.radius[index];
 
@@ -574,10 +577,15 @@ __global__ void kernelRenderCircles() {
     short minY = static_cast<short>(p.y - rad);
     short maxY = static_cast<short>(p.y + rad) + 1;
 
-    short minx=minX/TILEX;
-    short miny=minY/TILEY;
-    short maxx=(maxX+TILEX-1)/TILEX;
-    short maxy=(maxY+TILEY-1)/TILEY;
+    short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
+    short screenMaxX = (maxX > 0) ? ((maxX < imageWidth) ? maxX : imageWidth) : 0;
+    short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
+    short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
+    short minx=screenMinX/TILEX;
+    short miny=screenMinY/TILEY;
+    short maxx=(screenMaxX+TILEX-1)/TILEX;
+    short maxy=(screenMaxY+TILEY-1)/TILEY;
+
     for(int i=miny;i<maxy;i++){
         for(int j=minx;j<maxx;j++){
             int tile=i*TILEX+j;
@@ -589,10 +597,6 @@ __global__ void kernelRenderCircles() {
 
 
 
-    // short screenMinX = (minX > 0) ? ((minX < imageWidth) ? minX : imageWidth) : 0;
-    // short screenMaxX = (maxX > 0) ? ((maxX < imageWidth) ? maxX : imageWidth) : 0;
-    // short screenMinY = (minY > 0) ? ((minY < imageHeight) ? minY : imageHeight) : 0;
-    // short screenMaxY = (maxY > 0) ? ((maxY < imageHeight) ? maxY : imageHeight) : 0;
     // cuConstRendererParams.xRange[2*index]=screenMinX;
     // cuConstRendererParams.xRange[2*index+1]=screenMaxX;
     // cuConstRendererParams.yRange[2*index]=screenMinY;
