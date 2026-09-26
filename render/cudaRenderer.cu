@@ -825,5 +825,5 @@ CudaRenderer::render() {
         (image->width + blockDim.x - 1) / blockDim.x,
         (image->height + blockDim.y - 1) / blockDim.y);
 
-    shadePixels<<<gridDim1,blockDim1>>>();
+    //shadePixels<<<gridDim1,blockDim1>>>();
 }
