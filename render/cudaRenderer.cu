@@ -423,10 +423,10 @@ __global__ void shadePixels() {
     int indexY= blockIdx.y * blockDim.y + threadIdx.y;
     int index=indexX+indexY*cuConstRendererParams.imageWidth;
     if(indexX>=cuConstRendererParams.imageWidth||indexY>=cuConstRendererParams.imageHeight){
+        ((float4*)cuConstRendererParams.imageData)[index] = make_float4(1, 0, 0, 1);
         return;
     }
-    ((float4*)cuConstRendererParams.imageData)[index] = make_float4(1, 0, 0, 1);
-return;
+    
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
         float3 posn=((float3*)cuConstRendererParams.position)[i];
