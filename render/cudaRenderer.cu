@@ -824,8 +824,8 @@ CudaRenderer::render() {
     cudaDeviceSynchronize();
     dim3 blockDim1(16, 16, 1);
     dim3 gridDim1(
-        (image->width + blockDim.x - 1) / blockDim.x,
-        (image->height + blockDim.y - 1) / blockDim.y);
+        (image->width + blockDim1.x - 1) / blockDim1.x,
+        (image->height + blockDim1.y - 1) / blockDim1.y);
 
     shadePixels<<<gridDim1,blockDim1>>>();
     cudaDeviceSynchronize();
