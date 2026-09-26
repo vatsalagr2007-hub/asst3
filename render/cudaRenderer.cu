@@ -27,8 +27,8 @@ struct GlobalConstants {
     float* velocity;
     float* color;
     float* radius;
-    float* xRange;
-    float* yRange;
+    short* xRange;
+    short* yRange;
 
     
 
@@ -427,8 +427,15 @@ __global__ void shadePixels() {
     }
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
-        float diffX = cuConstRendererParams.position[3*i] - indexX;
-        float diffY = cuConstRendererParams.position[3*i+1] - indexY;
+        float3 posn=((float3*)cuConstRendererParams.position)[i];
+        //if(posn.x>=cuConstRendererParams)
+            //add wrap divergance.
+
+
+
+
+        float diffX = posn.x - indexX;
+        float diffY = posn.y - indexY;
         float pixelDist = diffX * diffX + diffY * diffY;
         float rad = cuConstRendererParams.radius[i];
         float maxDist = rad * rad;
