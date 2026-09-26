@@ -434,9 +434,9 @@ __global__ void shadePixels() {
     float4 imgptr= ((float4*)cuConstRendererParams.imageData)[index];
     for(int i=0;i<cuConstRendererParams.numCircles;i++){
         unsigned int tile = blockIdx.x + blockIdx.y*gridDim.x;
-        if(!(cuConstRendererParams.mask[((long)tile*(long)cuConstRendererParams.numCircles)/32+(((long)tile*(long)cuConstRendererParams.numCircles)%32+i)/32]&1u<<((((long)tile*(long)cuConstRendererParams.numCircles)%32+i)%32))){
-            continue;
-        }
+        // if(!(cuConstRendererParams.mask[((long)tile*(long)cuConstRendererParams.numCircles)/32+(((long)tile*(long)cuConstRendererParams.numCircles)%32+i)/32]&1u<<((((long)tile*(long)cuConstRendererParams.numCircles)%32+i)%32))){
+        //     continue;
+        // }
         
         float3 posn=((float3*)cuConstRendererParams.position)[i];
         //if(posn.x>=cuConstRendererParams)
