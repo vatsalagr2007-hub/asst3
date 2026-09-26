@@ -447,7 +447,7 @@ __global__ void shadePixels() {
         //
         //
         //
-        rgb = ((float3*)cuConstRendererParams.color)[index];
+        rgb = ((float3*)cuConstRendererParams.color)[i];
         alpha = .5f;
         
 
